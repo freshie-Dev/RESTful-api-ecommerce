@@ -1,24 +1,25 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import ProductsContextProvider from '../../context/ProductsContext'
+import FilterContextProvider from '../../context/FilterContext';
 import ProductCard from './ProductCard';
 
 export default function Products() {
-    const { products, getProducts } = ProductsContextProvider();
+    const { products } = ProductsContextProvider();
+    const { filteredProducts } = FilterContextProvider();
+    console.log("Products page",filteredProducts);
 
-    React.useEffect(() => {
-        getProducts();
-    }, []);
+    useEffect(() => {
+    }, [])
+    
+    
     
   return (
-    <>
-        <div>Products</div>
-        {products.map((product, index) => {
-            return (
-                <div key={index}>
-                    <ProductCard product = {product} />
-                </div>
-            )
-        })}
+    <>  
+        <div className=' grid grid-cols-3'>
+            {filteredProducts.map((product) => (
+                <ProductCard key={product._id} product={product} />
+            ))}
+        </div>
     </>
 
   )

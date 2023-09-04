@@ -1,0 +1,2 @@
+8/28/2023: 	Basic cart funtionality added.
+TODO:		Create local cart, and send API request only when user clicks Buy items.

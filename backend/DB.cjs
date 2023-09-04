@@ -3,9 +3,14 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
+const options = {
+    useNewUrlParser: true,
+    family: 4 // Use IPv4, skip trying IPv6
+  };
+
 const connectToMongoDB = async () => {
     try {
-        await mongoose.connect('mongodb://127.0.0.1:27017/EcommerceDB', {useNewUrlParser: true});
+        await mongoose.connect('mongodb+srv://dbUser:dbUserPassword@cluster0.dk70mwt.mongodb.net/EcommerceDB', options);
         console.log('Connected to MongoDB')
 
     } catch (error) {

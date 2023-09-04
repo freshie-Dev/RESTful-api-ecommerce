@@ -2,8 +2,10 @@ import React, { useState} from 'react'
 import { useNavigate } from 'react-router';
 import axios from 'axios';
 import styled from 'styled-components';
+import UserProviderContext from '../context/UserContext';
 
 export default function Login() {
+    const {loggedInUser, setLoggedInUser} = UserProviderContext();
     let navigate = useNavigate();
     const [User, setUser] = useState({
         email: '',
@@ -25,11 +27,11 @@ export default function Login() {
         const userCart = JSON.stringify(data.foundUser.cart)
 
         localStorage.setItem('token', token)
-        localStorage.setItem('cart', userCart)
+        setLoggedInUser
+
+
 
         console.log(token, userCart)
-
-
     };
 
 

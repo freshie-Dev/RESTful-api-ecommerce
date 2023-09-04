@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
 import { ProductsProvider } from './context/ProductsContext.jsx'
 import { UserProvider } from './context/UserContext.jsx'
+import { FilterProvider } from './context/FilterContext.jsx'
 import {BrowserRouter as Router} from 'react-router-dom'
 
 
@@ -12,9 +13,11 @@ const root = createRoot(document.getElementById('root'))
 root.render(
     <ProductsProvider>
       <UserProvider>
-        <Router>
-          <App />
-        </Router>
+        <FilterProvider>
+          <Router>
+            <App />
+          </Router>
+        </FilterProvider>
       </UserProvider>
     </ProductsProvider>
 )

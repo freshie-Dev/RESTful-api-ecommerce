@@ -36,7 +36,10 @@ export default function SignUp() {
     // createUser(user);
     const response = await axios.post('http://localhost:3000/register', user)
     const data = await response.data;
-    console.log(data)
+    localStorage.setItem('token', data.token)
+
+    navigate('/')
+    console.log(token)
 
   };
 

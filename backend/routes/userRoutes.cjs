@@ -22,7 +22,9 @@ router.route('/')
             });
             await user.save();
             console.log("User Created Successfully")
-            res.send(user);
+            // Generate a JWT token
+            const token = jwt.sign({ userId: user._id }, secretKey, { expiresIn: '1h' });
+            res.send({user, token});
         } catch (error) {
             console.log(error, 'Server error occured while creating a new user');
         }

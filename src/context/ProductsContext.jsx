@@ -23,6 +23,10 @@ const ProductsProvider = ({ children }) => {
         setFoundProduct(response.data);
     }
 
+    useEffect(() => {
+        getProducts();
+    }, [])
+
     return(
         <ProductsContext.Provider value={
             {
