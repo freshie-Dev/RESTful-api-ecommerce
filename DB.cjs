@@ -10,7 +10,7 @@ const options = {
 
 const connectToMongoDB = async () => {
     try {
-        await mongoose.connect('mongodb+srv://dbUser:dbUserPassword@cluster0.dk70mwt.mongodb.net/EcommerceDB', options);
+        await mongoose.connect('mongodb+srv://dbUser:admin@cluster0.dk70mwt.mongodb.net/EcommerceDB', options);
         console.log('Connected to MongoDB')
 
     } catch (error) {
@@ -63,8 +63,12 @@ const productSchema = new Schema({
                 // required: true
             },
             reviews: {
-                type: Number,
+                type: String,
                 // required: true
+            },
+            userId: {
+                type : Schema.Types.ObjectId,
+                ref: 'User'
             }
         }
     ],
@@ -105,8 +109,42 @@ const userSchema = new Schema({
             quantity: {
                 type: Number,
                 // required: true
+            },
+            color: {
+                type: String,
+            }
+            
+        }],
+    orders: [{
+        items: [{
+            productId: {
+                type: Schema.Types.ObjectId,
+                ref: 'Product',
+            },
+            quantity: {
+                type: Number,
+            },
+            color: {
+                type: String,
+            },
+            imageUrl: {
+                type :String ,
+            },
+            name: {
+                type  :String,
+            },
+            price: {
+                type   :Number,
+            },
+            brand: {
+                type    :String,
             }
         }],
+        orderDate: {
+            type: Date,
+            default: Date.now
+        }
+    }]
 });
 
 //! Creating a model for the product:

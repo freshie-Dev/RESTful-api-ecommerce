@@ -62,7 +62,7 @@ router.route('/:id')
         } catch (error) {
             console.log(error, 'Server error occured while finding a product by id');
         }
-    })
+    });
 
 
 // export router
