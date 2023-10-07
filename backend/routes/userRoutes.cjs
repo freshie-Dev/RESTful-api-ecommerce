@@ -6,6 +6,7 @@ const secretKey = 'User$ecretKey';
 
 // import Article
 const {User} = require('../DB.cjs');
+const { Product } = require ('../DB.cjs')
 
 
 router.route('/')
@@ -23,7 +24,7 @@ router.route('/')
             await user.save();
             console.log("User Created Successfully")
             // Generate a JWT token
-            const token = jwt.sign({ userId: user._id }, secretKey, { expiresIn: '1h' });
+        const token = jwt.sign({ userId: user._id }, secretKey /*, { expiresIn: '1h' }*/);
             res.send({user, token});
         } catch (error) {
             console.log(error, 'Server error occured while creating a new user');
@@ -37,9 +38,66 @@ router.route('/')
             console.log("User Fetched Successfully")
             res.send(user);
         } catch (error) {
-            res.send(error, 'Server error occured while fetching all users');
+            res.send(error, 'Server error occured while fetching all user"s data');
         }
     });
+
+//! ROUTE:2 GET 1 user:
+router.route('/userinfo')
+    .get( async (req,res)=>{
+        try {
+            // Get the user ID from the token
+            const token = req.header('auth-token');
+            const { userId } = jwt.decode(token);
+        
+            // Fetch the user by ID
+            const user = await User.findById(userId);
+        
+            if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+            }
+        
+            console.log('User Fetched Successfully', token);
+            res.status(200).json(user);
+        } catch (error) {
+            console.error('Error fetching user:', error.message);
+            res.status(500).json({ message: 'Server error occurred while fetching user data' });
+        }
+        })
+
+        .put(async (req, res) => {
+            try {
+              // Get the user ID from the token
+              const token = req.header('auth-token');
+              const { userId } = jwt.decode(token);
+          
+              // Fetch the user by ID
+              const user = await User.findById(userId);
+          
+              if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+              }
+          
+              // Update user information based on request data
+              if (req.body.name !== user.name) {
+                user.name = req.body.name;
+              }
+              if (req.body.password !== user.password) {
+                user.password = req.body.password;
+              }
+          
+              // Save the updated user
+              await user.save();
+          
+              console.log('User Updated Successfully', token);
+              res.status(200).json({ message: 'User information updated successfully' });
+            } catch (error) {
+              console.error('Error updating user:', error.message);
+              res.status(500).json({ message: 'Server error occurred while updating user data' });
+            }
+          })
+ 
+
 //! ROUTE:3 Login user:"/register/login"
 router.route('/login')
     .post(async(req, res) => {
@@ -99,18 +157,75 @@ router.route('/addtocart').post(async (req, res) => {
       }
   
       // Add item to cart
-      user.cart.push(req.body);
+      user.cart.push(...req.body);
+
+      const newOrder = {
+        items: req.body,
+      }
+      user.orders.push(newOrder)
       await user.save();
   
       console.log("Item added to cart successfully");
-      res.status(200).json({ message: 'Item added to cart successfully' });
+      res.status(200).json({ message: 'Item added to cart successfully', orders: user.orders });
   
     } catch (error) {
-      console.log(error, 'Server error occurred while adding item to cart');
-      res.status(500).json({ error: 'Internal server error' });
+      console.log(error.message, 'Server error occurred while adding item to cart');
+      res.status(500).json({ error: 'Internal server error', });
     }
   });
 
+  //! Route to post User Review on a product
+  router.route('/review').post(async (req, res) => {
+    try {
+      // Extract data from the request body
+      const { stars, reviews, productId } = req.body;
+  
+      // Get the user's authentication token from the request headers
+      const token = req.headers['auth-token'];
+      console.log('Received token:', token); // Debug
+  
+      if (!token) {
+        return res.status(400).json({ error: "Please login to add a review" });
+      }
+  
+      // Verify the user's token to get their user ID
+      let userData;
+      try {
+        userData = jwt.verify(token, secretKey);
+      } catch (error) {
+        console.log(error, 'Error occurred while verifying user');
+        return res.status(401).json({ error: "Invalid token" });
+      }
+      console.log('Decoded user data:', userData); // Debug
+      // Find the product by its ID
+      const product = await Product.findById(productId);
+      console.log('Found product:', product); // Debug
 
+      if (!product) {
+        return res.status(400).json({ error: "Product not found" });
+      }
+
+      // Create a new review object
+      const newReview = {
+        userId: userData.userId,
+        stars,
+        reviews,
+      };
+
+      // Push the new review into the product's reviews array
+      product.ratings.push(newReview);
+  
+      // Save the product object with the updated reviews array
+      await product.save();
+  
+      console.log("Review added to the product successfully");
+      res.status(200).json({ message: 'Review added successfully', review: newReview });
+  
+    } catch (error) {
+      console.log(error.message, 'Server error occurred while adding a review');
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+  
 // export router
 module.exports = router;
