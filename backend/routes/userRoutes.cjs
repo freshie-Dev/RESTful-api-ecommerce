@@ -13,23 +13,50 @@ router.route('/')
 
 //! ROUTE:1 Create new user:
     .post(async(req, res) => {
-        console.log(req.body)
-        try {
-            const user = new User({
-                name: req.body.name,
-                email: req.body.email,
-                password: req.body.password,
-                type: req.body.type
-            });
-            await user.save();
-            console.log("User Created Successfully")
-            // Generate a JWT token
-        const token = jwt.sign({ userId: user._id }, secretKey /*, { expiresIn: '1h' }*/);
-            res.send({user, token});
-        } catch (error) {
-            console.log(error, 'Server error occured while creating a new user');
-        }
-    })
+      console.log(req.body)
+      try {
+          const user = new User({
+              name: req.body.name,
+              email: req.body.email,
+              password: req.body.password,
+              type: req.body.type
+          });
+          await user.save();
+          console.log("User Created Successfully")
+          // Generate a JWT token
+      const token = jwt.sign({ userId: user._id }, secretKey /*, { expiresIn: '1h' }*/);
+          res.send({user, token});
+      } catch (error) {
+          console.log(error, 'Server error occured while creating a new user');
+      }
+  })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
    
 //! ROUTE:2 GET all users:
     .get(async(req, res) => {
@@ -64,7 +91,7 @@ router.route('/userinfo')
             res.status(500).json({ message: 'Server error occurred while fetching user data' });
         }
         })
-
+        //! Update user infoemation
         .put(async (req, res) => {
             try {
               // Get the user ID from the token
