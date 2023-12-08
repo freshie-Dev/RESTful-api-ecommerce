@@ -10,7 +10,7 @@ const options = {
 
 const connectToMongoDB = async () => {
     try {
-        await mongoose.connect('mongodb+srv://dbUser:admin123@cluster0.dk70mwt.mongodb.net/ShopEase', options);
+        await mongoose.connect('mongodb+srv://dbUser:admin123@cluster0.dk70mwt.mongodb.net/EcommerceDB', options);
         // await mongoose.connect('mongodb+srv://dbUser:admin@cluster0.dk70mwt.mongodb.net/EcommerceDB', options);
         console.log('Connected to MongoDB')
 
